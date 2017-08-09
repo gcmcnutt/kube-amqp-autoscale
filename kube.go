@@ -37,7 +37,6 @@ type apiContext struct {
 }
 
 func scale(kind string, ns string, name string, newSize int32, ctx *apiContext) error {
-	log.Printf("url=%s, user=%s, passwd=%s, token=%s, cafile=%s, insecure=%t", ctx.URL, ctx.User, ctx.Passwd, ctx.TokenFile, ctx.CAFile, ctx.Insecure)
 	c, err := ctx.client()
 	if err != nil {
 		return err
@@ -59,7 +58,7 @@ func scaleKind(c *kubernetes.Clientset, kind string, ns string, name string, new
 
 func scaleDeployments(c *kubernetes.Clientset, ns string, name string, newSize int32, b *scaleBounds) error {
 	log.Printf("ns=%s, name=%s, newSize=%d", ns, name, newSize)
-	deployment, err := c.AppsV1beta2().Deployments(ns).Get(name, v1.GetOptions{})
+	deployment, err := c.ExtensionsV1beta1().Deployments(ns).Get(name, v1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -67,7 +66,7 @@ func scaleDeployments(c *kubernetes.Clientset, ns string, name string, newSize i
 	if replicas != *deployment.Spec.Replicas {
 		log.Printf("Scaling deployment '%s' from %d to %d replicas", name, deployment.Spec.Replicas, replicas)
 		deployment.Spec.Replicas = &replicas
-		_, err = c.AppsV1beta2().Deployments(ns).Update(deployment)
+		_, err = c.ExtensionsV1beta1().Deployments(ns).Update(deployment)
 		if err != nil {
 			return err
 		}
