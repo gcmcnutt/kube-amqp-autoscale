@@ -57,7 +57,6 @@ func scaleKind(c *kubernetes.Clientset, kind string, ns string, name string, new
 }
 
 func scaleDeployments(c *kubernetes.Clientset, ns string, name string, newSize int32, b *scaleBounds) error {
-	log.Printf("ns=%s, name=%s, newSize=%d", ns, name, newSize)
 	deployment, err := c.ExtensionsV1beta1().Deployments(ns).Get(name, v1.GetOptions{})
 	if err != nil {
 		return err
